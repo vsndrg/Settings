@@ -39,6 +39,26 @@
               (select-frame-set-input-focus frame))))
 
 
+;; ======================
+;; Disable start screen
+;; ======================
+
+(setq inhibit-startup-screen t)
+
+;; Отключить сообщение в эхо-области
+(setq inhibit-startup-echo-area-message "vsndrg")  ;; замените your-username на ваше имя пользователя
+
+;; Очистить начальное сообщение в scratch-буфере
+(setq initial-scratch-message nil)
+
+;; Отключить прочие стартовые сообщения
+(setq initial-buffer-choice nil)
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (when (get-buffer "*GNU Emacs*")
+              (kill-buffer "*GNU Emacs*"))))
+
+
 
 
 ;; ************************************************************
@@ -130,8 +150,10 @@
 
 ;; New undo/redo bindings
 (global-set-key (kbd "C-z") 'undo) ;; Ctrl+Z = Undo
-(global-set-key (kbd "C-Shift-z") 'redo) ;; Ctrl+Shift+Z = Redo
-(global-set-key (kbd "C-Y") 'redo) ;; Alternative for Redo
+(global-set-key (kbd "C-S-z") 'undo-redo) ;; Ctrl+Shift+Z = Redo
+
+;; Select whole buffer
+(global-set-key (kbd "C-a") 'mark-whole-buffer)
 
 ;; -------------------------------------------------------------------
 ;; 3) Отключаем конфликтующие префиксы (если нужно)
@@ -139,8 +161,8 @@
 ;; Emacs по умолчанию использует C-c и C-x как префиксные ключи
 ;; (для пользовательских и встроенных команд); если вы не планируете
 ;; их использовать в «старом» режиме, можно снять префикс:
-(define-prefix-command nil 'ctl-x-map)
-(define-key global-map (kbd "C-x") nil)
+;;(define-prefix-command nil 'ctl-x-map)
+;;(define-key global-map (kbd "C-x") nil)
 
 ;; Но не обязательно — в большинстве случаев новая привязка
 ;; просто перекроет старую.
@@ -166,6 +188,12 @@
 (global-set-key (kbd "s-<down>") 'scroll-up-one-line)
 (global-set-key (kbd "s-<up>")   'scroll-down-one-line)
 
+
+;; =====================
+;; Set font (Consolas)
+;; =====================
+
+(set-frame-font "Consolas 12" nil t)
 
 ;; =====================
 ;; Enable line numbers
