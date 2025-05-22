@@ -78,7 +78,7 @@
 ;; Set custom theme
 ;; ==================
 
-(load-theme 'tango-dark t)
+(load-theme 'vscode-dark-plus t)
 
 ;; =====================
 ;; Disable sound alert
@@ -168,6 +168,16 @@
 ;; просто перекроет старую.
 
 
+;; ==================
+;; Smooth scrolling
+;; ==================
+
+(setq scroll-step 1)              ; Прокрутка по 1 строке
+(setq scroll-conservatively 100)  ; Не прыгать при приближении к краю
+(setq auto-window-vscroll nil)    ; Отключить автоматическую вертикальную прокрутку
+(setq scroll-margin 3)            ; Отступ (марджин) в 5 строк от краев окна
+
+
 ;; ===============
 ;; Set scrolling
 ;; ===============
@@ -185,8 +195,8 @@
   (scroll-down-command 1))
 
 ;; Bind to C-↓ / C-↑
-(global-set-key (kbd "s-<down>") 'scroll-up-one-line)
-(global-set-key (kbd "s-<up>")   'scroll-down-one-line)
+(global-set-key (kbd "C-<down>") 'scroll-up-one-line)
+(global-set-key (kbd "C-<up>")   'scroll-down-one-line)
 
 
 ;; =====================
@@ -200,7 +210,7 @@
 ;; =====================
 
 ;; Emacs 26+ built-in
-(global-display-line-numbers-mode 1)
+;;(global-display-line-numbers-mode 1)
 
 
 ;;========================
@@ -210,11 +220,11 @@
 (global-hl-line-mode 1)  ;; turn on hl-line-mode globally
 
 ;; After hl-line is loaded, adjust its face for a dark background
-(with-eval-after-load 'hl-line
-  (set-face-attribute 'hl-line nil
-                      :background "#454745"  ;; dark-grey highlight
-                      :foreground nil        ;; keep text color unchanged
-                      :inherit nil))
+;;(with-eval-after-load 'hl-line
+;;  (set-face-attribute 'hl-line nil
+;;                      :background "#454745"  ;; dark-grey highlight
+;;                      :foreground nil        ;; keep text color unchanged
+;;                      :inherit nil))
 
 
 ;; ================================================
@@ -224,22 +234,26 @@
 ;; Make sure line numbers are on
 (global-display-line-numbers-mode 1)
 
-(with-eval-after-load 'display-line-numbers
-  ;; Use the same bg as hl-line for the current line number
-  (set-face-attribute 'line-number-current-line nil
-                      :background "#2f3436"   ;; match your hl-line bg
-                      :foreground nil         ;; keep text color
-                      :inherit 'hl-line))     ;; inherit any other hl-line settings
+;; Включить выделение текущей строки
+(global-hl-line-mode 1)
 
 
-;; ============================
+;;(with-eval-after-load 'display-line-numbers
+;;  ;; Use the same bg as hl-line for the current line number
+;;  (set-face-attribute 'line-number-current-line nil
+;;                      :background "#2f3436"   ;; match your hl-line bg
+;;                      :foreground nil         ;; keep text color
+;;                      :inherit 'hl-line))     ;; inherit any other hl-line settings
+
+
+;; ===============================
 ;; Customize the selection color
-;; ============================
+;; ===============================
 
 ;; Set custom region (highlighted) color
-(set-face-attribute 'region nil
-                    :background "#3e5675"  ;; Background color for selection
-                    :foreground nil) ;; Foreground color for selection text
+;;(set-face-attribute 'region nil
+;;                    :background "#3e5675"  ;; Background color for selection
+;;                    :foreground nil) ;; Foreground color for selection text
 
 
 
@@ -318,3 +332,15 @@
 
 ;; Enable whitespace-mode in Coq buffers
 (add-hook 'coq-mode-hook #'whitespace-mode)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages '(vs-dark-theme vscode-dark-plus-theme)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
