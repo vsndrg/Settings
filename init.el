@@ -271,6 +271,16 @@
 (package-initialize)
 
 
+;; Установка company-mode, если не установлен
+(unless (package-installed-p 'company)
+  (package-refresh-contents)
+  (package-install 'company))
+
+;; Включение глобального company-mode
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+
+
 ;; ======================
 ;; Idris packages setup
 ;; ======================
@@ -376,7 +386,10 @@
 ;; ************************************************************
 
 
-;; Настройка отступов для фигурных скобок в C/C++
+;; =========================
+;; Correct braces position
+;; =========================
+
 (add-hook 'c-mode-common-hook
           (lambda ()
             ;; Устанавливаем стиль отступов "linux" (K&R с небольшими изменениями)
@@ -393,3 +406,65 @@
             (c-set-offset 'statement-case-open 0)    ; case -> {
             (c-set-offset 'block-open 0)             ; { внутри кода
             ))
+
+
+;; =================
+;; Auto completion
+;; =================
+
+(global-set-key (kbd "C-SPC") 'company-complete)
+
+;; Fast completion
+(setq company-idle-delay 0.0)          ; Delay before show 
+(setq company-minimum-prefix-length 1) ; Start auto complete from one symbol
+
+;; Improvement for C/C++
+(add-hook 'c-mode-hook 'company-mode)
+(add-hook 'c++-mode-hook 'company-mode)
+
+
+;; =======================
+;; Auto close '{' braces
+;; =======================
+
+(electric-pair-mode 1) ; Enable auto pair mode
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (setq-local electric-pair-pairs (append electric-pair-pairs '((?\{ . ?\})))
+            (local-set-key "{" 'my-c-brace)))
+            
+(defun my-c-brace ()
+  "Вставляет { с парной скобкой и правильным форматированием."
+  (interactive)
+  (if (looking-at "\\s-*}")
+      (progn
+        (insert "{")
+        (save-excursion
+          (newline)
+          (newline)
+          (indent-according-to-mode))
+    (insert "{}")
+    (backward-char)))
+
+
+;; ==================================
+;; Setup Enter behavior inside '{}'
+;; ==================================
+
+
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (local-set-key (kbd "RET") 'my-c-newline)))
+
+(defun my-c-newline ()
+  "When pressing Enter between {} creates new line with indent."
+  (interactive)
+  (cond
+   ((and (eq (char-before) ?{) (eq (char-after) ?}))
+    (progn
+      (newline-and-indent)
+      (save-excursion
+        (newline)
+        (indent-according-to-mode))))
+   (t (newline-and-indent))))
+
