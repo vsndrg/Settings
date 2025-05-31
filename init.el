@@ -265,14 +265,18 @@
 ;; ************************************************************
 
 
-;; ====================
-;; Coq packages setup
-;; ====================
-
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
 (package-initialize)
+
+
+;; ======================
+;; Idris packages setup
+;; ======================
+
+;;(add-to-list 'load-path "~/.emacs.d/idris2-mode/")
+;;(require 'idris2-mode)
 
 
 
@@ -344,3 +348,48 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+
+
+
+;; ************************************************************
+;;
+;; IDRIS 2 MODE SETTINGS
+;;
+;; ************************************************************
+
+
+;; 1. путь к вашему клону idris2-mode
+;;(add-to-list 'load-path "~/.emacs.d/idris2-mode/")
+
+;; 2. сам режим
+;;(require 'idris2-mode)
+
+;; 3. явно говорим: все файлы *.idr открывать в idris2-mode
+;;(add-to-list 'auto-mode-alist '("\\.idr\\'" . idris2-mode))
+
+
+;; ************************************************************
+;;
+;; C/C++ MODE SETTINGS
+;;
+;; ************************************************************
+
+
+;; Настройка отступов для фигурных скобок в C/C++
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            ;; Устанавливаем стиль отступов "linux" (K&R с небольшими изменениями)
+            (c-set-style "linux")
+            
+            ;; Дополнительные настройки для скобок:
+            (setq-local c-basic-offset 2)           ; Базовый отступ = 4 пробела
+            (setq-local c-indent-level 2)            ; Уровень отступа = 4
+            
+            ;; Настройка отступа для открывающей скобки после операторов
+            (c-set-offset 'substatement-open 0)      ; while/for/if -> { (без отступа)
+            
+            ;; Отключаем "подвешивание" скобок для операторов
+            (c-set-offset 'statement-case-open 0)    ; case -> {
+            (c-set-offset 'block-open 0)             ; { внутри кода
+            ))
