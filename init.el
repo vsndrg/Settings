@@ -379,33 +379,11 @@
 ;;(add-to-list 'auto-mode-alist '("\\.idr\\'" . idris2-mode))
 
 
-;; ************************************************************
+;; ********************************************************
 ;;
 ;; C/C++ MODE SETTINGS
 ;;
-;; ************************************************************
-
-
-;; =========================
-;; Correct braces position
-;; =========================
-
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            ;; Устанавливаем стиль отступов "linux" (K&R с небольшими изменениями)
-            (c-set-style "linux")
-            
-            ;; Дополнительные настройки для скобок:
-            (setq-local c-basic-offset 2)           ; Базовый отступ = 4 пробела
-            (setq-local c-indent-level 2)            ; Уровень отступа = 4
-            
-            ;; Настройка отступа для открывающей скобки после операторов
-            (c-set-offset 'substatement-open 0)      ; while/for/if -> { (без отступа)
-            
-            ;; Отключаем "подвешивание" скобок для операторов
-            (c-set-offset 'statement-case-open 0)    ; case -> {
-            (c-set-offset 'block-open 0)             ; { внутри кода
-            ))
+;; ********************************************************
 
 
 ;; =================
@@ -423,48 +401,50 @@
 (add-hook 'c++-mode-hook 'company-mode)
 
 
+;; =========================
+;; Correct braces position
+;; =========================
+
+(defun my-c-mode-set-bsd-style ()
+  "Включить BSD/Allman-стиль в cc-mode: '{' для substatements без смещения."
+  (c-set-style "bsd")
+  ;; установить c-basic-offset = 2 (или своё значение)
+  (setq c-basic-offset 2)
+  ;; убрать доп. отступ перед '{' для substatement-open
+  (c-set-offset 'substatement-open 0))
+
+(add-hook 'c-mode-common-hook #'my-c-mode-set-bsd-style)
+
+
 ;; =======================
 ;; Auto close '{' braces
 ;; =======================
 
-(electric-pair-mode 1) ; Enable auto pair mode
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            (setq-local electric-pair-pairs (append electric-pair-pairs '((?\{ . ?\})))
-            (local-set-key "{" 'my-c-brace)))
-            
-(defun my-c-brace ()
-  "Вставляет { с парной скобкой и правильным форматированием."
-  (interactive)
-  (if (looking-at "\\s-*}")
-      (progn
-        (insert "{")
-        (save-excursion
-          (newline)
-          (newline)
-          (indent-according-to-mode))
-    (insert "{}")
-    (backward-char)))
+(defun my-c-mode-enable-electric ()
+  "Включить electric-pair-mode и авто-новые линии в C/C++."
+  ;; вставлять сразу пару «{}»
+  (electric-pair-local-mode 1)
+  ;; вставлять перенос строки после {, } и ;
+  (c-toggle-auto-newline 1))
+
+(add-hook 'c-mode-common-hook #'my-c-mode-enable-electric)
 
 
-;; ==================================
-;; Setup Enter behavior inside '{}'
-;; ==================================
+;; Отключение автодополнения внутри строк и комментариев
+(defun my-company-in-code-context ()
+  "Проверяет, находится ли курсор в коде (не в строке и не в комментарии)."
+  (not (or (nth 3 (syntax-ppss))   ; Внутри строки?
+           (nth 4 (syntax-ppss))))) ; Внутри комментария?
 
+;; Добавляем проверку контекста для company-mode
+(with-eval-after-load 'company
+  (add-to-list 'company-transformers 'my-company-ignore-strings))
 
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            (local-set-key (kbd "RET") 'my-c-newline)))
-
-(defun my-c-newline ()
-  "When pressing Enter between {} creates new line with indent."
-  (interactive)
-  (cond
-   ((and (eq (char-before) ?{) (eq (char-after) ?}))
-    (progn
-      (newline-and-indent)
-      (save-excursion
-        (newline)
-        (indent-according-to-mode))))
-   (t (newline-and-indent))))
+(defun my-company-ignore-strings (candidates)
+  "Фильтрует кандидатов, если курсор находится внутри строки."
+  (if (my-company-in-code-context)
+      candidates
+    (unless (eq this-command 'company-complete)
+      (company-cancel))
+    nil))
 
