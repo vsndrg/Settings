@@ -40,6 +40,7 @@ vim.cmd [[
     Plug 'kana/vim-textobj-user'
     Plug 'isovector/cornelis'
     Plug 'sphamba/smear-cursor.nvim'
+    Plug 'karb94/neoscroll.nvim'
 
   call plug#end()
 ]]
@@ -71,46 +72,65 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   end,
 })
 
+local opts = { noremap = true, silent = true } 
+
 -- Save file command
-vim.keymap.set("n", "<leader>w", ":w<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>w", ":w<CR>", opts)
 
 -- Add line under cursor in normal mode
-vim.keymap.set("n", "<leader>o", "o<Esc>k", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>o", "o<Esc>k", opts)
 -- Add line before cursor in normal mode
-vim.keymap.set("n", "<leader>O", "O<Esc>j", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>O", "O<Esc>j", opts)
 
 -- Add space after cursor in normal mode
-vim.keymap.set("n", "<leader>-", "a <Esc>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>-", "a <Esc>", opts)
 -- Add space before cursor in normal mode
-vim.keymap.set("n", "<leader>_", "i <Esc><Right>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>_", "i <Esc><Right>", opts)
 
 -- Edit init.lua file command
-vim.keymap.set("n", "<leader>e", ":e $MYVIMRC<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>e", ":e $MYVIMRC<CR>", opts)
 
 -- Save init.lua file command
-vim.keymap.set("n", "<leader>s", ":so $MYVIMRC<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>s", ":so $MYVIMRC<CR>", opts)
 
 -- Move rest of the line on the next line command
-vim.keymap.set("n", "<leader><CR>", "i<CR><Esc>k$", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader><CR>", "i<CR><Esc>k$", opts)
 -- Tab in normal mode command
-vim.keymap.set("n", "<leader><Tab>", "i<Tab><Esc>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader><Tab>", "i<Tab><Esc><Right>", opts)
 
 -- Agda Unicode symbols keys
-vim.keymap.set("i", "\\=", "≡", { noremap = true, silent = true })
-vim.keymap.set("i", "\\=<>", "≡⟨⟩", { noremap = true, silent = true })
-vim.keymap.set("i", "\\=<?>", "≡⟨ ? ⟩", { noremap = true, silent = true })
-vim.keymap.set("i", "\\=<", "≡⟨ ⟩<Left><Left>", { noremap = true, silent = true })
-vim.keymap.set("i", "\\r", "→", { noremap = true, silent = true })
-vim.keymap.set("i", "\\s", "∑", { noremap = true, silent = true })
-vim.keymap.set("i", "\\la", "λ", { noremap = true, silent = true })
-vim.keymap.set("i", "\\cp", "⊔", { noremap = true, silent = true })
+vim.keymap.set("i", "\\=", "≡", opts)
+vim.keymap.set("i", "\\=<>", "≡⟨⟩", opts)
+vim.keymap.set("i", "\\=<?>", "≡⟨ ? ⟩", opts)
+vim.keymap.set("i", "\\=<", "≡⟨ ⟩<Left><Left>", opts)
+vim.keymap.set("i", "\\r", "→", opts)
+vim.keymap.set("i", "\\s", "∑", opts)
+vim.keymap.set("i", "\\la", "λ", opts)
+vim.keymap.set("i", "\\cp", "⊔", opts)
+vim.keymap.set("i", "\\ep", "ε", opts)
+vim.keymap.set("i", "\\N", "ℕ", opts)
 
 -- Move current line command
-vim.keymap.set('n', '<M-k>', ':m .-2<CR>==', { noremap = true, silent = true })
-vim.keymap.set('n', '<M-j>', ':m .+1<CR>==', { noremap = true, silent = true })
+vim.keymap.set('n', '<M-k>', ':m .-2<CR>==', opts)
+vim.keymap.set('n', '<M-j>', ':m .+1<CR>==', opts)
 
-vim.keymap.set('v', '<M-k>', ":m '<-2<CR>gv=gv", { noremap = true, silent = true })
-vim.keymap.set('v', '<M-j>', ":m '>+1<CR>gv=gv", { noremap = true, silent = true })
+-- Switch between opened windows commands
+vim.keymap.set('n', '<C-h>', '<C-w>h', opts)
+vim.keymap.set('n', '<C-j>', '<C-w>j', opts)
+vim.keymap.set('n', '<C-k>', '<C-w>k', opts)
+vim.keymap.set('n', '<C-l>', '<C-w>l', opts)
+
+-- Open new window command
+vim.keymap.set('n', '<C-n>', ':vs ', opts)
+
+vim.keymap.set('n', '<C-M-h>', ':vertical resize -1<CR>', opts)
+vim.keymap.set('n', '<C-M-l>', ':vertical resize +1<CR>', opts)
+vim.keymap.set('n', '<C-M-j>', ':resize -1<CR>', opts)
+vim.keymap.set('n', '<C-M-k>', ':resize +1<CR>', opts)
+
+vim.keymap.set('v', '<M-k>', ":m '<-2<CR>gv=gv", opts)
+vim.keymap.set('v', '<M-j>', ":m '>+1<CR>gv=gv", opts)
+vim.keymap.set('v', 'p', "\"_dP", opts)
 
 
 -- Setup smooth cursor
